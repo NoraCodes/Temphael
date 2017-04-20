@@ -25,11 +25,7 @@ Scraping page 3
 Scraping page 4
 Scraping page 5
 Generating database...
-Dumping database to toasted-pearls.toasty%20posties.markov
-
-12:22:23: leo [~/Projects/genevabot]
-$ ./
-genevabot.py  .git/         tscrape.py    .vscode/      
+Dumping database to toasted-pearls.toasty%20posties.markov  
 
 12:22:23: leo [~/Projects/genevabot]
 $ ./genevabot.py 
