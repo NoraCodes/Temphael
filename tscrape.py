@@ -19,7 +19,8 @@ PARSER.add_argument('start_page', type=int, metavar='START_PAGE',
                     help="The page from which to start scraping content.")
 PARSER.add_argument('end_page', type=int, metavar='END_PAGE',
                     help="The final page to scrape content from.")
-PARSER.add_argument("--debug", type=bool)
+PARSER.add_argument("--debug", action="store_true")
+PARSER.add_argument("--notags", action="store_true", help="Don't scrape tags, only content.")
 
 ARGS = PARSER.parse_args()
 
@@ -48,6 +49,9 @@ for page_number in range(ARGS.start_page, ARGS.end_page + 1):
         if "replied to your post" in t:
             continue
         CORPUS += t + "\n"
+
+    if ARGS.notags:
+        continue
 
     # Search <a> tags for post tags
     for tag in soup.find_all('a'):
@@ -80,7 +84,7 @@ for page_number in range(ARGS.start_page, ARGS.end_page + 1):
         except ValueError:
             pass
 
-        CORPUS += t
+        CORPUS += t + " "
     CORPUS += "\n"
 
 
