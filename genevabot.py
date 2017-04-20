@@ -17,5 +17,7 @@ BOT = MarkovChain(FILENAME)
 VALID_SENTENCES = 0
 while VALID_SENTENCES < NUMBER:
     SENTENCE = BOT.generateString()
+    if len(SENTENCE.split()) < 3:
+        continue
     VALID_SENTENCES += 1
     print(SENTENCE)
