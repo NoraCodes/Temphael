@@ -21,6 +21,7 @@ PARSER.add_argument('end_page', type=int, metavar='END_PAGE',
                     help="The final page to scrape content from.")
 PARSER.add_argument("--debug", action="store_true")
 PARSER.add_argument("--notags", action="store_true", help="Don't scrape tags, only content.")
+PARSER.add_argument("--hash", action="store_true", help="Add # symbol to text from tags.")
 
 ARGS = PARSER.parse_args()
 
@@ -84,7 +85,10 @@ for page_number in range(ARGS.start_page, ARGS.end_page + 1):
         except ValueError:
             pass
 
-        CORPUS += t + " "
+        if ARGS.hash:
+            CORPUS += "#" + t + " "
+        else:
+            CORPUS += t + " "
     CORPUS += "\n"
 
 
