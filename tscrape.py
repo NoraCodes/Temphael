@@ -10,18 +10,24 @@ from bs4 import BeautifulSoup
 from pymarkovchain import MarkovChain
 
 PARSER = argparse.ArgumentParser(
-    description="Build a Markov Chain bot from a Tumblr blog (or single tag on a blog).")
+    description="Build a Markov Chain bot from a Tumblr " + 
+    "blog (or single tag on a blog).")
 PARSER.add_argument('url', metavar="URL", type=str,
-                    help='The Tumblr subdomain to scrape. For staff.tumblr.com, URL would be staff')
+                    help="The Tumblr subdomain to scrape. " + 
+                    "For staff.tumblr.com, URL would be staff")
 PARSER.add_argument('--tag',
-                    help="The tag to scrape on the given blog. Don't include the hash symbol '#'.")
+                    help="The tag to scrape on the given blog." + 
+                    "Don't include the hash symbol '#'.")
 PARSER.add_argument('start_page', type=int, metavar='START_PAGE',
                     help="The page from which to start scraping content.")
 PARSER.add_argument('end_page', type=int, metavar='END_PAGE',
                     help="The final page to scrape content from.")
 PARSER.add_argument("--debug", action="store_true")
-PARSER.add_argument("--notags", action="store_true", help="Don't scrape tags, only content.")
-PARSER.add_argument("--hash", action="store_true", help="Add # symbol to text from tags.")
+PARSER.add_argument("--notags", 
+        action="store_true", help="Don't scrape tags, only content.")
+PARSER.add_argument("--hash", 
+        action="store_true", help="Add # symbol to text from tags.")
+PARSER.add_argument("--prune", action="store_true", help="Prune short tags")
 
 ARGS = PARSER.parse_args()
 
@@ -29,16 +35,16 @@ if ARGS.tag is None:
     TARGET_URL = "https://{}.tumblr.com/page/".format(ARGS.url)
     TARGET_FILE = "{}.posts.markov".format(ARGS.url)
 else:
-    TARGET_URL = "https://{}.tumblr.com/tagged/{}/page/".format(ARGS.url,
-                                                                urllib.parse.quote(ARGS.tag))
+    TARGET_URL = "https://{}.tumblr.com/tagged/{}/page/"
+    TARGET_URL = TARGET_URL.format(ARGS.url, urllib.parse.quote(ARGS.tag))
     TARGET_FILE = "{}.{}.markov".format(ARGS.url, urllib.parse.quote(ARGS.tag))
-
 
 CORPUS = ""
 
 for page_number in range(ARGS.start_page, ARGS.end_page + 1):
     print("Scraping page {}".format(page_number))
-    soup = BeautifulSoup(requests.get(TARGET_URL + str(page_number)).text, 'lxml')
+    soup = BeautifulSoup(
+            requests.get(TARGET_URL + str(page_number)).text, 'lxml')
 
     # Search <p> tags for post content
     for para in soup.find_all('p'):
@@ -76,6 +82,10 @@ for page_number in range(ARGS.start_page, ARGS.end_page + 1):
         if "//" in t:
             continue
         if "cw: " in t:
+            continue
+
+        # Prune short tags
+        if ARGS.prune and len(t) <= 3:
             continue
 
         # Tags which are just numbers should not be in the corpus
