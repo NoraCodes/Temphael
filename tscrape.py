@@ -25,8 +25,8 @@ PARSER.add_argument('end_page', type=int, metavar='END_PAGE',
 PARSER.add_argument("--debug", action="store_true")
 PARSER.add_argument("--notags", 
         action="store_true", help="Don't scrape tags, only content.")
-PARSER.add_argument("--hash", 
-        action="store_true", help="Add # symbol to text from tags.")
+PARSER.add_argument("--nohash", 
+        action="store_true", help="Don't add # symbol to text from tags.")
 PARSER.add_argument("--prune", action="store_true", help="Prune short tags")
 
 ARGS = PARSER.parse_args()
@@ -60,6 +60,8 @@ for page_number in range(ARGS.start_page, ARGS.end_page + 1):
     if ARGS.notags:
         continue
 
+    # Start the tags segment
+    CORPUS += "# "
     # Search <a> tags for post tags
     for tag in soup.find_all('a'):
         h = tag.get('href')
@@ -95,10 +97,10 @@ for page_number in range(ARGS.start_page, ARGS.end_page + 1):
         except ValueError:
             pass
 
-        if ARGS.hash:
-            CORPUS += "#" + t + " "
-        else:
+        if ARGS.nohash:
             CORPUS += t + " "
+        else:
+            CORPUS += '#' + t + " "
     CORPUS += "\n"
 
 
